@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - SmartCart</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    🛒 <strong>S Cart Admin Panel</strong>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cart.html">
+        Cart <span class="cart-count" id="cart-count" style="display: none;"></span>
+      </a>
+      <a href="#" id="logout-btn">Logout</a>
+    </nav>
+  </header>
+
+  <section class="admin-panel">
+    <h2 id="s2">Manage Products</h2>
+    <form id="product-form">
+      <input type="hidden" id="product-id" />
+      <input type="text" id="name" placeholder="Product Name" required />
+      <input type="text" id="description" placeholder="Description" required />
+      <input type="number" id="price" placeholder="Price" required />
+      <input type="number" id="stock" placeholder="Stock" required />
+      <input type="text" id="imageUrl" placeholder="Image URL" required />
+      <button type="submit">Save Product</button>
+    </form>
+
+    <div id="product-list" class="product-container"></div>
+  </section>
+
+  <script src="admin.js">
+  </script>
+</body>
+</html>

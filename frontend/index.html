@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartCart - Products</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    🛒 <strong>S Cart</strong>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cart.html">
+        Cart <span class="cart-count" id="cart-count" style="display: none;"></span>
+      </a>      
+      <a href="#" onclick="goToAdmin()">Admin</a>
+    </nav>
+  </header>
+
+
+  <div class="search-bar" style="text-align:center; margin: 20px;">
+    <input type="text" id="search-input" placeholder="Search products..." style="padding: 8px; width: 250px;" />
+  </div>
+
+  <section class="product-container" id="product-list">
+
+  </section>
+
+  <script src="main.js"></script>
+</body>
+</html>

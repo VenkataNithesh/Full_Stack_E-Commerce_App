@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Details</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #333;
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header a {
+      color: #fff;
+      margin-left: 20px;
+      text-decoration: none;
+    }
+
+    .cart-count {
+      background-color: red;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 50%;
+      font-size: 14px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+
+    .product-detail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      padding: 30px;
+      justify-content: center;
+    }
+
+    .product-images img {
+      max-width: 350px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .product-info {
+      max-width: 500px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .product-info h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .product-info p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    select, button {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    🛒 <strong>S Cart</strong>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="cart.html">
+        Cart <span class="cart-count" id="cart-count" style="display: none;"></span>
+      </a>
+    </nav>
+  </header>
+
+  <div class="product-detail" id="product-detail"></div>
+
+  <script>
+    const API = "http://localhost:8080/api/products";
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    let currentStock = 0;
+
+    fetch(`${API}/${productId}`)
+      .then(res => res.json())
+      .then(p => {
+        currentStock = p.stock;
+        const div = document.getElementById("product-detail");
+        div.innerHTML = `
+          <div class="product-images">
+            <img src="${p.imageUrl}" alt="${p.name}" />
+          </div>
+          <div class="product-info">
+            <h2>${p.name}</h2>
+            <p><strong>₹${p.price}</strong></p>
+            <p>${p.description}</p>
+            <p><strong>Stock:</strong> ${p.stock}</p>
+
+            <label for="quantity"><strong>Quantity:</strong></label>
+            <select id="quantity">
+              ${Array.from({ length: Math.min(10, p.stock) }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join("")}
+            </select>
+
+            <button onclick="addToCart(${p.id}, ${p.price})">Add to Cart</button>
+          </div>
+        `;
+      });
+
+    function addToCart(id, price) {
+      const selectedQty = parseInt(document.getElementById("quantity").value);
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const index = cart.findIndex(item => item.id === id);
+      let currentQty = index !== -1 ? cart[index].quantity : 0;
+
+      if (currentQty + selectedQty > currentStock) {
+        alert(`❌ Cannot add ${selectedQty} items. Only ${currentStock - currentQty} left in stock.`);
+        return;
+      }
+
+      if (index !== -1) {
+        cart[index].quantity += selectedQty;
+      } else {
+        cart.push({ id: id, quantity: selectedQty, price: price });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      alert(`${selectedQty} item(s) added to cart!`);
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const countBadge = document.getElementById("cart-count");
+
+      if (total > 0) {
+        countBadge.innerText = total;
+        countBadge.style.display = "inline-block";
+      } else {
+        countBadge.style.display = "none";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", updateCartCount);
+  </script>
+</body>
+</html>
